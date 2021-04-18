@@ -76,7 +76,11 @@ const viewRoles = () => {
   };
 
   const viewEmployees = () => {
-    const sql = `SELECT * FROM Employee`
+    const sql = `SELECT Employee.*, role.title
+    AS Employee_role
+    FROM Employee
+    LEFT JOIN role
+    ON Employee.role_id = role.id`
    db.query(sql, (err,result) => {
      if(err) {
          throw err
@@ -205,4 +209,4 @@ const viewRoles = () => {
   }
  
 
-  
+  /*`SELECT * FROM Employee`*/ 
