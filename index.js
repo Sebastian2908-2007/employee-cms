@@ -30,8 +30,10 @@ const initChoices = function () {
                 viewEmployees();
                 break;
             case 'Add a department':
+                addDepartment();
                 break;
             case 'add a role':
+                addRole();
                 break;
             case 'add an employee':
                 break;
@@ -82,4 +84,54 @@ const viewRoles = () => {
      )
    })
         
+  };
+
+  const addDepartment = () => {
+      inquirer.prompt({ 
+          type: 'text',
+          name: 'deptname',
+          message: 'what is new department name?'
+  }).then(({deptname}) => {
+      const sql = `INSERT INTO Department(name)
+      VALUES(?)`;
+
+      db.query(sql, deptname,(err,result) => {
+          if (err) {
+              throw err;
+          }
+          console.table(result)
+      })
+  })
+  };
+
+  const addRole = () => {
+      inquirer.prompt([
+          {
+       type: 'text',
+       name: 'title',
+       message: 'what is new roles title?'
+          },
+          {
+              type: 'decimal',
+              name: 'salary',
+              message: 'what is new roles salary?'
+          },
+          {
+            type: 'integer',
+            name: 'Department_id',
+            message: 'what is the department id of this role?'  
+          }
+      ]).then(({title, salary, Department_id}) => {
+          const sql = `INSERT INTO role (title, salary, Department_id)
+          VALUES (?, ?, ?)`;
+          
+        db.query(sql,[title, salary, Department_id], (err, result) => {
+            if(err) {
+                console.log(err);
+            }
+            console.table(result)
+        })
+      })
   }
+
+ 
