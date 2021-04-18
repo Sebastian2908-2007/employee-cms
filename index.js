@@ -76,11 +76,13 @@ const viewRoles = () => {
   };
 
   const viewEmployees = () => {
-    const sql = `SELECT Employee.*, role.title
-    AS Employee_role
+    const sql = `SELECT Employee.*, role.title 
+    AS Employee_role, role.salary AS Employee_salary
     FROM Employee
     LEFT JOIN role
-    ON Employee.role_id = role.id`
+    ON Employee.role_id = role.id;
+    
+    `
    db.query(sql, (err,result) => {
      if(err) {
          throw err
@@ -209,4 +211,10 @@ const viewRoles = () => {
   }
  
 
-  /*`SELECT * FROM Employee`*/ 
+ /* `SELECT employee.id, employee.first_name, employee.last_name, role.title AS role, role.salary, department.name AS department,
+  CONCAT(e.first_name, ' ', e.last_name) AS manager
+  FROM employee
+  INNER JOIN role ON role.id = employee.role_id
+  INNER JOIN department ON department.id = role.department_id
+  LEFT JOIN employee e on employee.manager_id = e.id
+  ORDER BY employee.id;*/
