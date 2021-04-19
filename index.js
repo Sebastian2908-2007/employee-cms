@@ -16,7 +16,7 @@ const initChoices = function () {
         type: 'list',
         name: 'choices',
         message: 'what would you like to do?',
-        choices: ['view all departments', 'view all roles', 'view all employees', 'Add a department', 'add a role', 'add an employee', 'update an employee role']
+        choices: ['view all departments', 'view all roles', 'view all employees', 'Add a department', 'add a role', 'add an employee', 'update an employee role','exit']
     }).then(({choices}) => {
         switch (choices) {
             case 'view all departments':
@@ -40,7 +40,9 @@ const initChoices = function () {
                 break;
             case 'update an employee role':
                 updateEmpRole();
-                break;                      
+                break; 
+            case 'exit':
+                break;                         
         }
 
     });
@@ -58,7 +60,9 @@ const viewDept = () => {
    console.table(
     result
    )
+   initChoices()
  })
+ ;
       
 };
 
@@ -71,18 +75,22 @@ const viewRoles = () => {
      console.table(
       result
      )
+     initChoices()
    })
         
   };
 
   const viewEmployees = () => {
-    const sql = `SELECT Employee.*, role.title 
-    AS Employee_role, role.salary AS Employee_salary
+    const sql = 
+    `SELECT Employee.*, role.title 
+    AS Employee_role, role.salary AS Employee_salary,
+    CONCAT(e.first_name, '',e.last_name) AS manager
     FROM Employee
     LEFT JOIN role
-    ON Employee.role_id = role.id;
-    
-    `
+    ON Employee.role_id = role.id
+    LEFT JOIN Employee e on Employee.manager_id = e.id
+    ORDER BY Employee.id`
+
    db.query(sql, (err,result) => {
      if(err) {
          throw err
@@ -90,9 +98,11 @@ const viewRoles = () => {
      console.table(
       result
      )
+     initChoices()
    })
         
   };
+
 
   const addDepartment = () => {
       inquirer.prompt({ 
@@ -108,6 +118,8 @@ const viewRoles = () => {
               throw err;
           }
           console.table(result)
+          viewDept();
+          initChoices();
       })
   })
   };
@@ -138,6 +150,8 @@ const viewRoles = () => {
                 console.log(err);
             }
             console.table(result)
+            viewRoles();
+            initChoices();
         })
       });
   };
@@ -177,6 +191,8 @@ const viewRoles = () => {
             }
            
                 console.table(result);
+                viewEmployees();
+                initChoices();
             
             
         })
@@ -184,8 +200,7 @@ const viewRoles = () => {
   };
 
   const updateEmpRole = () => {
-      viewEmployees();
-      viewRoles();
+      
       inquirer.prompt([ 
           { 
             type: 'decimal',
@@ -206,6 +221,7 @@ const viewRoles = () => {
               }
               console.table(result);
               viewEmployees();
+              initChoices()
           })
       })
   }
@@ -218,3 +234,13 @@ const viewRoles = () => {
   INNER JOIN department ON department.id = role.department_id
   LEFT JOIN employee e on employee.manager_id = e.id
   ORDER BY employee.id;*/
+
+  /*`SELECT Employee.*, role.title 
+    AS Employee_role, role.salary AS Employee_salary,
+    CONCAT(e.first_name, '',e.last_name) AS manager
+    FROM Employee
+    LEFT JOIN role
+    ON Employee.role_id = role.id
+    LEFT JOIN Employee e on Employee.manager_id = e.id
+    ORDER BY Employee.id;
+    ` */ 
